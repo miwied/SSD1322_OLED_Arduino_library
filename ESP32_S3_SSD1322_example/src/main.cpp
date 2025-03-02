@@ -150,26 +150,22 @@ void setup()
 {
   pinMode(OLED_CS, OUTPUT);
   pinMode(OLED_DC, OUTPUT);
-  pinMode(OLED_CLOCK, OUTPUT);
-  pinMode(OLED_DATA, OUTPUT);
 
   SPI.begin(OLED_CLOCK, -1, OLED_DATA, OLED_CS);
   delay(2500);
 
   display.api.SSD1322_API_init();
 
-  clearDisplayBuffer();
+  display.gfx.set_buffer_size(256, 64);
+  display.gfx.fill_buffer(tx_buf, 0);
 
-  // First, draw some pixels on frame buffer
-	// draw_pixel(frame_buffer, x, y, brightness);
-	display.gfx.draw_pixel(tx_buf, 10+20, 10+20, 1);
-	display.gfx.draw_pixel(tx_buf, 15+20, 15+20, 5);
-	display.gfx.draw_pixel(tx_buf, 20+20, 20+20, 9);
-	display.gfx.draw_pixel(tx_buf, 25+20, 25+20, 15);
+  // draw vertical and horizontal lines
+  display.gfx.draw_hline(tx_buf, 31, 20, 50, 10);
+  display.gfx.draw_vline(tx_buf, 31, 0, 31, 10);
 
-	// send a frame buffer to the display
-	display.gfx.send_buffer_to_OLED(tx_buf, 0, 0);
-	delay(2000);
+  // send a frame buffer to the display
+  display.gfx.send_buffer_to_OLED(tx_buf, 0, 0);
+  delay(2000);
 
   // drawBasicShapes();
   // displayBitmaps();
@@ -183,5 +179,4 @@ void setup()
 
 void loop()
 {
-
 }
