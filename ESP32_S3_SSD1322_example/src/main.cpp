@@ -1,9 +1,11 @@
-// Config: Driver: SSD1322; MCU: ESP-32-S3; Framework: Arduino
+// Config: Driver: SSD1322; MCU: ESP32-S3; Framework: Arduino
 
+// include the ssd1322 lib
+#include "../lib/SSD1322_OLED_lib/SSD1322.h"
+
+// arduino framework + esp32 spi
 #include <Arduino.h>
 #include <SPI.h>
-
-#include <SSD1322.h>
 
 // example images
 #include <creeper.h>
@@ -27,11 +29,9 @@
 #define OLED_WIDTH 256
 #define OLED_HEIGHT 64
 
+// buffer + display instance
 uint8_t tx_buf[OLED_WIDTH * OLED_HEIGHT / 2];
 SSD1322 display(OLED_CS, OLED_DC, OLED_RESET, OLED_HEIGHT, OLED_WIDTH);
-
-// Set the SPI settings with CPOL = High and CPHA = 2
-SPISettings spiSettings(8000000, MSBFIRST, SPI_MODE2);  // 8 MHz, MSB first, SPI_MODE2 = CPOL High, CPHA 2
 
 // ### demo functions:
 
@@ -39,7 +39,6 @@ void clearDisplayBuffer()
 {
   display.gfx.fill_buffer(tx_buf, 0);
   display.gfx.send_buffer_to_OLED(tx_buf, 0, 0);
-  delay(2000);
 }
 
 void drawBasicShapes()
@@ -152,28 +151,34 @@ void setup()
   pinMode(OLED_DC, OUTPUT);
 
   SPI.begin(OLED_CLOCK, -1, OLED_DATA, OLED_CS);
-  delay(2500);
+  delay(500);
 
+  // init display
   display.api.SSD1322_API_init();
 
+  // init buffer
   display.gfx.set_buffer_size(256, 64);
-  display.gfx.fill_buffer(tx_buf, 0);
+  clearDisplayBuffer();
 
-  // draw vertical and horizontal lines
-  display.gfx.draw_hline(tx_buf, 31, 20, 50, 10);
-  display.gfx.draw_vline(tx_buf, 31, 0, 31, 10);
+  // shapes
+  drawBasicShapes();
 
-  // send a frame buffer to the display
-  display.gfx.send_buffer_to_OLED(tx_buf, 0, 0);
-  delay(2000);
+  // bitmaps
+  displayBitmaps();
 
-  // drawBasicShapes();
-  // displayBitmaps();
-  // testDisplayModes();
-  // setCustomGrayscale();
-  // testSleepMode();
-  // clearDisplayBuffer();
-  // displayText();
+  // modes
+  testDisplayModes();
+
+  // grayscale
+  setCustomGrayscale();
+
+  // sleepmode
+  testSleepMode();
+
+  // text
+  displayText();
+
+  // large bitmap
   // displayLargeBitmap();
 }
 
