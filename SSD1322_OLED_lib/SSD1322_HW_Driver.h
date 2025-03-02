@@ -19,24 +19,29 @@
 #ifndef SSD1322_HW_DRIVER_H
 #define SSD1322_HW_DRIVER_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <Arduino.h> // Arduino-Kernfunktionen
+#include <SPI.h>     // SPI-Bibliothek für Display-Kommunikation
 
 #include <stdint.h>
 
-void SSD1322_HW_drive_CS_low();
-void SSD1322_HW_drive_CS_high();
-void SSD1322_HW_drive_DC_low();
-void SSD1322_HW_drive_DC_high();
-void SSD1322_HW_drive_RESET_low();
-void SSD1322_HW_drive_RESET_high();
-void SSD1322_HW_SPI_send_byte(uint8_t byte_to_transmit);
-void SSD1322_HW_SPI_send_array(uint8_t *array_to_transmit, uint32_t array_size);
-void SSD1322_HW_msDelay(uint32_t milliseconds);
+class SSD1322_HW_DRIVER
+{
+private:
+    int OLED_CS;
+    int OLED_DC;
+    int OLED_RESET;
 
-#ifdef __cplusplus
-}
-#endif
+public:
+    SSD1322_HW_DRIVER(int OLED_CS_PIN, int OLED_DC_PIN, int OLED_RESET_PIN = -1);
+    void SSD1322_HW_drive_CS_low();
+    void SSD1322_HW_drive_CS_high();
+    void SSD1322_HW_drive_DC_low();
+    void SSD1322_HW_drive_DC_high();
+    void SSD1322_HW_drive_RESET_low();
+    void SSD1322_HW_drive_RESET_high();
+    void SSD1322_HW_SPI_send_byte(uint8_t byte_to_transmit);
+    void SSD1322_HW_SPI_send_array(uint8_t *array_to_transmit, uint32_t array_size);
+    void SSD1322_HW_msDelay(uint32_t milliseconds);
+};
 
 #endif /* SSD1322_HW_DRIVER_H */

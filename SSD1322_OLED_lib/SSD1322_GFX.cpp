@@ -14,16 +14,14 @@
  */
 
 //====================== Includes ====================//
-#include "../SSD1322_OLED_lib/SSD1322_API.h"
 #include "../SSD1322_OLED_lib/SSD1322_GFX.h"
 
-#include <stdlib.h>
-#include <math.h>
+//====================== Constructor ========================//
+SSD1322_GFX::SSD1322_GFX(SSD1322_API *api, int OLED_HEIGHT_SIZE, int OLED_WIDTH_SIZE)
+	: api_instance(api), OLED_HEIGHT(OLED_HEIGHT_SIZE), OLED_WIDTH(OLED_WIDTH_SIZE),
+	  _buffer_height(OLED_HEIGHT_SIZE), _buffer_width(OLED_WIDTH_SIZE) {}
 
-const GFXfont *gfx_font = NULL;     //pointer to Adafruit font that is currently selected
-
-uint16_t _buffer_height = 64;       //buffer dimensions used to determine if pixel is within array bounds
-uint16_t _buffer_width = 256;      //by default buffer size is equal to OLED size
+const GFXfont *gfx_font = NULL; // pointer to Adafruit font that is currently selected
 
 //====================== set buffer size ========================//
 /**
@@ -39,9 +37,7 @@ uint16_t _buffer_width = 256;      //by default buffer size is equal to OLED siz
  *  @param[in] buffer_height
  *  		   new y size of a buffer in pixels
  */
-
-
-void set_buffer_size(uint16_t buffer_width, uint16_t buffer_height)
+void SSD1322_GFX::set_buffer_size(uint16_t buffer_width, uint16_t buffer_height)
 {
 	_buffer_width = buffer_width;
 	_buffer_height = buffer_height;
@@ -56,7 +52,7 @@ void set_buffer_size(uint16_t buffer_width, uint16_t buffer_height)
  *  @param[in] brightness
  *             brightness value of pixel (range 0-15 dec or 0x00-0x0F hex)
  */
-void fill_buffer(uint8_t *frame_buffer, uint8_t brightness)
+void SSD1322_GFX::fill_buffer(uint8_t *frame_buffer, uint8_t brightness)
 {
 	uint8_t byte_value = (brightness << 4) | brightness;
 	uint32_t buffer_size = _buffer_height * _buffer_width / 2;
@@ -71,7 +67,7 @@ void fill_buffer(uint8_t *frame_buffer, uint8_t brightness)
  *  @brief Draws one pixel on frame buffer
  *
  *  Draws pixel of specified brightness on given coordinates on frame buffer.
- *  Pixels drawn outside buffer outline are ignored to avoid overwriting
+ *  Pixels drawn outside buffer outline are ignored to avoid SSD1322_GFX::overwriting
  *  memory outside frame buffer - "segfault".
  *
  *  @param[in] frame_buffer
@@ -83,9 +79,9 @@ void fill_buffer(uint8_t *frame_buffer, uint8_t brightness)
  *  @param[in] brightness
  *             brightness value of pixel (range 0-15 dec or 0x00-0x0F hex)
  */
-void draw_pixel(uint8_t *frame_buffer, uint16_t x, uint16_t y, uint8_t brightness)
+void SSD1322_GFX::draw_pixel(uint8_t *frame_buffer, uint16_t x, uint16_t y, uint8_t brightness)
 {
-	if(x > (_buffer_width-1) || y > (_buffer_height-1))
+	if (x > (_buffer_width - 1) || y > (_buffer_height - 1))
 		return;
 
 	if ((y * _buffer_width + x) % 2 == 1)
@@ -115,9 +111,9 @@ void draw_pixel(uint8_t *frame_buffer, uint16_t x, uint16_t y, uint8_t brightnes
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
  */
-void draw_vline(uint8_t *frame_buffer, uint16_t x, uint16_t y0, uint16_t y1, uint8_t brightness)
+void SSD1322_GFX::draw_vline(uint8_t *frame_buffer, uint16_t x, uint16_t y0, uint16_t y1, uint8_t brightness)
 {
-	if(y0 < y1)
+	if (y0 < y1)
 	{
 		for (uint16_t i = y0; i <= y1; i++)
 		{
@@ -150,9 +146,9 @@ void draw_vline(uint8_t *frame_buffer, uint16_t x, uint16_t y0, uint16_t y1, uin
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
  */
-void draw_hline(uint8_t *frame_buffer, uint16_t y, uint16_t x0, uint16_t x1, uint8_t brightness)
+void SSD1322_GFX::draw_hline(uint8_t *frame_buffer, uint16_t y, uint16_t x0, uint16_t x1, uint8_t brightness)
 {
-	if(x0 < x1)
+	if (x0 < x1)
 	{
 		for (uint16_t i = x0; i <= x1; i++)
 		{
@@ -186,10 +182,10 @@ void draw_hline(uint8_t *frame_buffer, uint16_t y, uint16_t x0, uint16_t x1, uin
  *             y position of line ending
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
-*/
-void draw_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
+ */
+void SSD1322_GFX::draw_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
 {
-	//handle horizontal and vertical lines with appropriate functions
+	// handle horizontal and vertical lines with appropriate functions
 	if (x0 == x1)
 	{
 		draw_vline(frame_buffer, x0, y0, y1, brightness);
@@ -274,10 +270,10 @@ void draw_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uin
  *             y position of line ending
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
-*/
-void draw_AA_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
+ */
+void SSD1322_GFX::draw_AA_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
 {
-	//handle horizontal and vertical lines with appropriate functions
+	// handle horizontal and vertical lines with appropriate functions
 	if (x0 == x1)
 	{
 		draw_vline(frame_buffer, x0, y0, y1, brightness);
@@ -315,18 +311,18 @@ void draw_AA_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, 
 	// handle first endpoint
 	float xend = round(x0);
 	float yend = y0 + gradient * (xend - x0);
-	float xgap =  1 - ((x0 + 0.5) - floor(x0 + 0.5));
+	float xgap = 1 - ((x0 + 0.5) - floor(x0 + 0.5));
 	float xpxl1 = xend; // this will be used in the main loop
 	float ypxl1 = floor(yend);
 	if (steep)
 	{
-		draw_pixel(frame_buffer, ypxl1, xpxl1, (1-(yend - (floor(yend))) * xgap)*brightness);
-		draw_pixel(frame_buffer, ypxl1 + 1, xpxl1, (yend - (floor(yend)) * xgap)*brightness);
+		draw_pixel(frame_buffer, ypxl1, xpxl1, (1 - (yend - (floor(yend))) * xgap) * brightness);
+		draw_pixel(frame_buffer, ypxl1 + 1, xpxl1, (yend - (floor(yend))*xgap) * brightness);
 	}
 	else
 	{
-		draw_pixel(frame_buffer, xpxl1, ypxl1, (1-(yend - (floor(yend))) * xgap)*brightness);
-		draw_pixel(frame_buffer, xpxl1, ypxl1 + 1, (yend - (floor(yend)) * xgap)*brightness);
+		draw_pixel(frame_buffer, xpxl1, ypxl1, (1 - (yend - (floor(yend))) * xgap) * brightness);
+		draw_pixel(frame_buffer, xpxl1, ypxl1 + 1, (yend - (floor(yend))*xgap) * brightness);
 	}
 
 	float intery = yend + gradient; // first y-intersection for the main loop
@@ -335,17 +331,17 @@ void draw_AA_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, 
 	xend = round(x1);
 	yend = y1 + gradient * (xend - x1);
 	xgap = (x1 + 0.5) - floor(x1 + 0.5);
-	float xpxl2 = xend; //this will be used in the main loop
+	float xpxl2 = xend; // this will be used in the main loop
 	float ypxl2 = floor(yend);
 	if (steep)
 	{
-		draw_pixel(frame_buffer, ypxl2, xpxl2, (1 - (yend - floor(yend)) * xgap)*brightness);
-		draw_pixel(frame_buffer, ypxl2 + 1, xpxl2, ((yend - floor(yend)) * xgap)*brightness);
+		draw_pixel(frame_buffer, ypxl2, xpxl2, (1 - (yend - floor(yend)) * xgap) * brightness);
+		draw_pixel(frame_buffer, ypxl2 + 1, xpxl2, ((yend - floor(yend)) * xgap) * brightness);
 	}
 	else
 	{
-		draw_pixel(frame_buffer, xpxl2, ypxl2, (1 - (yend - floor(yend)) * xgap)*brightness);
-		draw_pixel(frame_buffer, xpxl2, ypxl2 + 1, ((yend - floor(yend)) * xgap)*brightness);
+		draw_pixel(frame_buffer, xpxl2, ypxl2, (1 - (yend - floor(yend)) * xgap) * brightness);
+		draw_pixel(frame_buffer, xpxl2, ypxl2 + 1, ((yend - floor(yend)) * xgap) * brightness);
 	}
 
 	// main loop
@@ -353,8 +349,8 @@ void draw_AA_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, 
 	{
 		for (int x = xpxl1 + 1; x <= xpxl2 - 1; x++)
 		{
-			draw_pixel(frame_buffer, floor(intery), x, (1 - (intery - floor(intery)))*brightness);
-			draw_pixel(frame_buffer, floor(intery) + 1, x, (intery - floor(intery))*brightness);
+			draw_pixel(frame_buffer, floor(intery), x, (1 - (intery - floor(intery))) * brightness);
+			draw_pixel(frame_buffer, floor(intery) + 1, x, (intery - floor(intery)) * brightness);
 			intery = intery + gradient;
 		}
 	}
@@ -362,14 +358,12 @@ void draw_AA_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, 
 	{
 		for (int x = xpxl1 + 1; x <= xpxl2 - 1; x++)
 		{
-			draw_pixel(frame_buffer, x, floor(intery), (1 - (intery - floor(intery)))*brightness);
-			draw_pixel(frame_buffer, x, floor(intery) + 1, (intery - floor(intery))*brightness);
+			draw_pixel(frame_buffer, x, floor(intery), (1 - (intery - floor(intery))) * brightness);
+			draw_pixel(frame_buffer, x, floor(intery) + 1, (intery - floor(intery)) * brightness);
 			intery = intery + gradient;
 		}
 	}
 }
-
-
 
 //====================== draw empty rectangle ========================//
 /**
@@ -388,7 +382,7 @@ void draw_AA_line(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, 
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
  */
-void draw_rect(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
+void SSD1322_GFX::draw_rect(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
 {
 	draw_vline(frame_buffer, x0, y0, y1, brightness);
 	draw_vline(frame_buffer, x1, y0, y1, brightness);
@@ -413,7 +407,7 @@ void draw_rect(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uin
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
  */
-void draw_rect_filled(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
+void SSD1322_GFX::draw_rect_filled(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
 {
 	for (uint16_t i = x0; i <= x1; i++)
 	{
@@ -439,40 +433,40 @@ void draw_rect_filled(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t 
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
  */
-void draw_circle(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t r, uint8_t brightness)
+void SSD1322_GFX::draw_circle(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t r, uint8_t brightness)
 {
-  int16_t f = 1 - r;
-  int16_t ddF_x = 1;
-  int16_t ddF_y = -2 * r;
-  int16_t x = 0;
-  int16_t y = r;
+	int16_t f = 1 - r;
+	int16_t ddF_x = 1;
+	int16_t ddF_y = -2 * r;
+	int16_t x = 0;
+	int16_t y = r;
 
-  draw_pixel(frame_buffer, x0, y0 + r, brightness);
-  draw_pixel(frame_buffer, x0, y0 - r, brightness);
-  draw_pixel(frame_buffer, x0 + r, y0, brightness);
-  draw_pixel(frame_buffer, x0 - r, y0, brightness);
+	draw_pixel(frame_buffer, x0, y0 + r, brightness);
+	draw_pixel(frame_buffer, x0, y0 - r, brightness);
+	draw_pixel(frame_buffer, x0 + r, y0, brightness);
+	draw_pixel(frame_buffer, x0 - r, y0, brightness);
 
-  while (x < y)
-  {
-    if (f >= 0)
-    {
-      y--;
-      ddF_y += 2;
-      f += ddF_y;
-    }
-    x++;
-    ddF_x += 2;
-    f += ddF_x;
+	while (x < y)
+	{
+		if (f >= 0)
+		{
+			y--;
+			ddF_y += 2;
+			f += ddF_y;
+		}
+		x++;
+		ddF_x += 2;
+		f += ddF_x;
 
-    draw_pixel(frame_buffer, x0 + x, y0 + y, brightness);
-    draw_pixel(frame_buffer, x0 - x, y0 + y, brightness);
-    draw_pixel(frame_buffer, x0 + x, y0 - y, brightness);
-    draw_pixel(frame_buffer, x0 - x, y0 - y, brightness);
-    draw_pixel(frame_buffer, x0 + y, y0 + x, brightness);
-    draw_pixel(frame_buffer, x0 - y, y0 + x, brightness);
-    draw_pixel(frame_buffer, x0 + y, y0 - x, brightness);
-    draw_pixel(frame_buffer, x0 - y, y0 - x, brightness);
-  }
+		draw_pixel(frame_buffer, x0 + x, y0 + y, brightness);
+		draw_pixel(frame_buffer, x0 - x, y0 + y, brightness);
+		draw_pixel(frame_buffer, x0 + x, y0 - y, brightness);
+		draw_pixel(frame_buffer, x0 - x, y0 - y, brightness);
+		draw_pixel(frame_buffer, x0 + y, y0 + x, brightness);
+		draw_pixel(frame_buffer, x0 - y, y0 + x, brightness);
+		draw_pixel(frame_buffer, x0 + y, y0 - x, brightness);
+		draw_pixel(frame_buffer, x0 - y, y0 - x, brightness);
+	}
 }
 
 //====================== draw bitmap ========================//
@@ -497,7 +491,7 @@ void draw_circle(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t r, ui
  *  @param[in] y_size
  *             height of bitmap in pixels
  */
-void draw_bitmap_8bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
+void SSD1322_GFX::draw_bitmap_8bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
 {
 	uint16_t bitmap_pos = 0;
 
@@ -532,11 +526,11 @@ void draw_bitmap_8bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0,
  *  @param[in] y_size
  *             height of bitmap in pixels
  */
-void draw_bitmap_4bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
+void SSD1322_GFX::draw_bitmap_4bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size)
 {
-	uint16_t bitmap_pos = 0;       //byte index in bitmap array
+	uint16_t bitmap_pos = 0; // byte index in bitmap array
 	uint16_t processed_pixels = 0;
-	uint8_t pixel_parity = 0;      //if pixel is even = 0; odd = 1
+	uint8_t pixel_parity = 0; // if pixel is even = 0; odd = 1
 
 	for (uint16_t i = y0; i < y0 + y_size; i++)
 	{
@@ -544,7 +538,7 @@ void draw_bitmap_4bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0,
 		{
 			pixel_parity = processed_pixels % 2;
 
-			if(pixel_parity == 0)
+			if (pixel_parity == 0)
 			{
 				draw_pixel(frame_buffer, j, i, bitmap[bitmap_pos] >> 4);
 				processed_pixels++;
@@ -569,7 +563,7 @@ void draw_bitmap_4bpp(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0,
  *  @param[in] new_gfx_font
  *             pointer to font structure
  */
-void select_font(const GFXfont *new_gfx_font)
+void SSD1322_GFX::select_font(const GFXfont *new_gfx_font)
 {
 	gfx_font = new_gfx_font;
 }
@@ -591,27 +585,27 @@ void select_font(const GFXfont *new_gfx_font)
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
  */
-void draw_char(uint8_t *frame_buffer, uint8_t c, uint16_t x, uint16_t y, uint8_t brightness)
+void SSD1322_GFX::draw_char(uint8_t *frame_buffer, uint8_t c, uint16_t x, uint16_t y, uint8_t brightness)
 {
-	if(gfx_font == NULL)
+	if (gfx_font == NULL)
 		return;
 
-	c -= (uint8_t)gfx_font->first;          //convert input char to corresponding byte from font array
-    GFXglyph *glyph = gfx_font->glyph + c;  //get pointer of glyph corresponding to char
-    uint8_t *bitmap = gfx_font->bitmap;     //get pointer of char bitmap
+	c -= (uint8_t)gfx_font->first;		   // convert input char to corresponding byte from font array
+	GFXglyph *glyph = gfx_font->glyph + c; // get pointer of glyph corresponding to char
+	uint8_t *bitmap = gfx_font->bitmap;	   // get pointer of char bitmap
 
-    uint16_t bo = glyph->bitmapOffset;
-    uint8_t width = glyph->width;
-    uint8_t height = glyph->height;
+	uint16_t bo = glyph->bitmapOffset;
+	uint8_t width = glyph->width;
+	uint8_t height = glyph->height;
 
-    int8_t x_offset = glyph->xOffset;
-    int8_t y_offset = glyph->yOffset;
+	int8_t x_offset = glyph->xOffset;
+	int8_t y_offset = glyph->yOffset;
 
-    //decide for background brightness or font brightness
-    uint8_t bit = 0;
-    uint8_t bits = 0;
-    uint8_t y_pos = 0;
-    uint8_t x_pos = 0;
+	// decide for background brightness or font brightness
+	uint8_t bit = 0;
+	uint8_t bits = 0;
+	uint8_t y_pos = 0;
+	uint8_t x_pos = 0;
 
 	for (y_pos = 0; y_pos < height; y_pos++)
 	{
@@ -623,11 +617,10 @@ void draw_char(uint8_t *frame_buffer, uint8_t c, uint16_t x, uint16_t y, uint8_t
 			}
 			if (bits & 0x80)
 			{
-				draw_pixel(frame_buffer, x + x_offset + x_pos, y + y_offset+y_pos, brightness);
+				draw_pixel(frame_buffer, x + x_offset + x_pos, y + y_offset + y_pos, brightness);
 			}
 			else
 			{
-
 			}
 			bits <<= 1;
 		}
@@ -653,14 +646,14 @@ void draw_char(uint8_t *frame_buffer, uint8_t c, uint16_t x, uint16_t y, uint8_t
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
  */
-void draw_text(uint8_t *frame_buffer, const char* text, uint16_t x, uint16_t y, uint8_t brightness)
+void SSD1322_GFX::draw_text(uint8_t *frame_buffer, const char *text, uint16_t x, uint16_t y, uint8_t brightness)
 {
-    while (*text)
-    {
-        draw_char(frame_buffer, *text, x, y, brightness);
-        x = x + gfx_font->glyph[*text-32].xAdvance;
-        text++;
-    }
+	while (*text)
+	{
+		draw_char(frame_buffer, *text, x, y, brightness);
+		x = x + gfx_font->glyph[*text - 32].xAdvance;
+		text++;
+	}
 }
 
 //====================== send frame buffer to OLED ========================//
@@ -681,8 +674,8 @@ void draw_text(uint8_t *frame_buffer, const char* text, uint16_t x, uint16_t y, 
  *             y position of frame buffer part that will be displayed on OLED Useful for vertical scrolling.
 
  */
-void send_buffer_to_OLED(uint8_t *frame_buffer, uint16_t start_x, uint16_t start_y)
+void SSD1322_GFX::send_buffer_to_OLED(uint8_t *frame_buffer, uint16_t start_x, uint16_t start_y)
 {
-	SSD1322_API_set_window(0, 63, 0, 127);
-	SSD1322_API_send_buffer(frame_buffer + (start_y * OLED_WIDTH / 2) + start_x, 8192);
+	api_instance->SSD1322_API_set_window(0, 63, 0, 127);
+	api_instance->SSD1322_API_send_buffer(frame_buffer + (start_y * OLED_WIDTH / 2) + start_x, 8192);
 }

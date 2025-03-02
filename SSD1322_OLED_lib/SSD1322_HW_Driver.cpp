@@ -17,12 +17,11 @@
  ****************************************************************************************
  */
 
-//=================== Include hardware HAL libraries =====================//
-#include "stm32f4xx_hal.h"
-#include "main.h"
-#include "spi.h"
-
 #include "../SSD1322_OLED_lib/SSD1322_HW_Driver.h"
+
+//====================== Constructor ========================//
+SSD1322_HW_DRIVER::SSD1322_HW_DRIVER(int OLED_CS_PIN, int OLED_DC_PIN, int OLED_RESET_PIN)
+	: OLED_CS(OLED_CS_PIN), OLED_DC(OLED_DC_PIN), OLED_RESET(OLED_RESET_PIN) {}
 
 //====================== CS pin low ========================//
 /**
@@ -30,9 +29,9 @@
  *
  *  CS pin may be also signed as "SS" or "NSS"
  */
-void SSD1322_HW_drive_CS_low()
+void SSD1322_HW_DRIVER::SSD1322_HW_drive_CS_low()
 {
-	HAL_GPIO_WritePin(SPI5_CS_GPIO_Port, SPI5_CS_Pin, 0);
+	digitalWrite(OLED_CS, LOW);
 }
 
 //====================== CS pin high ========================//
@@ -41,9 +40,9 @@ void SSD1322_HW_drive_CS_low()
  *
  *  CS pin may be also signed as "SS" or "NSS"
  */
-void SSD1322_HW_drive_CS_high()
+void SSD1322_HW_DRIVER::SSD1322_HW_drive_CS_high()
 {
-	HAL_GPIO_WritePin(SPI5_CS_GPIO_Port, SPI5_CS_Pin, 1);
+	digitalWrite(OLED_CS, HIGH);
 }
 
 //====================== DC pin low ========================//
@@ -52,9 +51,9 @@ void SSD1322_HW_drive_CS_high()
  *
  *  High state is for data and low state is for command.
  */
-void SSD1322_HW_drive_DC_low()
+void SSD1322_HW_DRIVER::SSD1322_HW_drive_DC_low()
 {
-	HAL_GPIO_WritePin(SPI5_DC_GPIO_Port, SPI5_DC_Pin, 0);
+	digitalWrite(OLED_DC, LOW);
 }
 
 //====================== DC pin high ========================//
@@ -63,9 +62,9 @@ void SSD1322_HW_drive_DC_low()
  *
  *  High state is for data and low state is for command.
  */
-void SSD1322_HW_drive_DC_high()
+void SSD1322_HW_DRIVER::SSD1322_HW_drive_DC_high()
 {
-	HAL_GPIO_WritePin(SPI5_DC_GPIO_Port, SPI5_DC_Pin, 1);
+	digitalWrite(OLED_DC, HIGH);
 }
 
 //====================== RESET pin low ========================//
@@ -74,9 +73,12 @@ void SSD1322_HW_drive_DC_high()
  *
  *  Logic low on RESET resets OLED driver.
  */
-void SSD1322_HW_drive_RESET_low()
+void SSD1322_HW_DRIVER::SSD1322_HW_drive_RESET_low()
 {
-	HAL_GPIO_WritePin(SPI5_RESET_GPIO_Port, SPI5_RESET_Pin, 0);
+	if (OLED_RESET != -1)
+	{
+		digitalWrite(OLED_RESET, LOW);
+	}
 }
 
 //====================== RESET pin high ========================//
@@ -85,9 +87,12 @@ void SSD1322_HW_drive_RESET_low()
  *
  *  Logic low on RESET resets OLED driver.
  */
-void SSD1322_HW_drive_RESET_high()
+void SSD1322_HW_DRIVER::SSD1322_HW_drive_RESET_high()
 {
-	HAL_GPIO_WritePin(SPI5_RESET_GPIO_Port, SPI5_RESET_Pin, 1);
+	if (OLED_RESET != -1)
+	{
+		digitalWrite(OLED_RESET, HIGH);
+	}
 }
 
 //====================== Send single SPI byte ========================//
@@ -96,9 +101,11 @@ void SSD1322_HW_drive_RESET_high()
  *
  *  @param[in] byte_to_transmit byte that will be transmitted through SPI interface
  */
-void SSD1322_HW_SPI_send_byte(uint8_t byte_to_transmit)
+void SSD1322_HW_DRIVER::SSD1322_HW_SPI_send_byte(uint8_t byte_to_transmit)
 {
-	HAL_SPI_Transmit(&hspi5, &byte_to_transmit, 1, 10);
+	SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0));
+	SPI.transfer(byte_to_transmit);
+	SPI.endTransaction();
 }
 
 //====================== Send array of SPI bytes ========================//
@@ -108,9 +115,14 @@ void SSD1322_HW_SPI_send_byte(uint8_t byte_to_transmit)
  *  @param[in] array_to_transmit array of bytes that will be transmitted through SPI interface
  *  @param[in] array_size amount of bytes to transmit
  */
-void SSD1322_HW_SPI_send_array(uint8_t *array_to_transmit, uint32_t array_size)
+void SSD1322_HW_DRIVER::SSD1322_HW_SPI_send_array(uint8_t *array_to_transmit, uint32_t array_size)
 {
-	HAL_SPI_Transmit(&hspi5, array_to_transmit, array_size, 100);
+	SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0));
+	for (uint32_t i = 0; i < array_size; i++)
+	{
+		SPI.transfer(array_to_transmit[i]);
+	}
+	SPI.endTransaction();
 }
 
 //====================== Milliseconds delay ========================//
@@ -123,7 +135,7 @@ void SSD1322_HW_SPI_send_array(uint8_t *array_to_transmit, uint32_t array_size)
  *
  *  @param[in] milliseconds time to wait
  */
-void SSD1322_HW_msDelay(uint32_t milliseconds)
+void SSD1322_HW_DRIVER::SSD1322_HW_msDelay(uint32_t milliseconds)
 {
-	HAL_Delay(milliseconds);
+	delay(milliseconds);
 }
