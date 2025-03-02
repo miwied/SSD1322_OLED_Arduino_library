@@ -162,24 +162,31 @@ void setup()
 
   // shapes
   drawBasicShapes();
+  clearDisplayBuffer();
 
   // bitmaps
   displayBitmaps();
+  clearDisplayBuffer();
 
   // modes
   testDisplayModes();
+  clearDisplayBuffer();
 
   // grayscale
   setCustomGrayscale();
+  clearDisplayBuffer();
 
   // sleepmode
   testSleepMode();
+  clearDisplayBuffer();
 
   // text
   displayText();
+  clearDisplayBuffer();
 
   // large bitmap
   // displayLargeBitmap();
+  //clearDisplayBuffer();
 }
 
 void loop()
