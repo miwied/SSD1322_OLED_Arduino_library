@@ -6,7 +6,8 @@
 #include <SPI.h>
 
 // include the ssd1322 lib
-#include <SSD1322.h>
+#include "SSD1322_API.h"
+
 
 // example images
 #include <creeper.h>

@@ -1,9 +1,9 @@
 #ifndef SSD1322_H
 #define SSD1322_H
 
-#include "../SSD1322_OLED_lib/SSD1322_API.h"
-#include "../SSD1322_OLED_lib/SSD1322_GFX.h"
-#include "../SSD1322_OLED_lib/SSD1322_HW_Driver.h"
+#include "SSD1322_API.h"
+#include "SSD1322_GFX.h"
+#include "SSD1322_HW_Driver.h"
 
 // wrapper class of individual classes
 class SSD1322

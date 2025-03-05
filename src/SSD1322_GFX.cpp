@@ -14,7 +14,7 @@
  */
 
 //====================== Includes ====================//
-#include "../SSD1322_OLED_lib/SSD1322_GFX.h"
+#include "SSD1322_GFX.h"
 
 //====================== Constructor ========================//
 SSD1322_GFX::SSD1322_GFX(SSD1322_API *api, int OLED_HEIGHT_SIZE, int OLED_WIDTH_SIZE)

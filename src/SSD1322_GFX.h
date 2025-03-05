@@ -16,7 +16,7 @@
 #ifndef SSD1322_GFX_H
 #define SSD1322_GFX_H
 
-#include "../SSD1322_OLED_lib/SSD1322_API.h"
+#include "SSD1322_API.h"
 
 #include <stdlib.h>
 #include <math.h>

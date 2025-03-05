@@ -17,7 +17,7 @@
  ****************************************************************************************
  */
 
-#include "../SSD1322_OLED_lib/SSD1322_HW_Driver.h"
+#include "SSD1322_HW_Driver.h"
 
 //====================== Constructor ========================//
 SSD1322_HW_DRIVER::SSD1322_HW_DRIVER(int OLED_CS_PIN, int OLED_DC_PIN, int OLED_RESET_PIN)
