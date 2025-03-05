@@ -1,11 +1,12 @@
 // Config: Driver: SSD1322; MCU: ESP32-S3; Framework: Arduino
 
-// include the ssd1322 lib
-#include <SSD1322.h>
 
 // arduino framework + esp32 spi
 #include <Arduino.h>
 #include <SPI.h>
+
+// include the ssd1322 lib
+#include <SSD1322.h>
 
 // example images
 #include <creeper.h>
