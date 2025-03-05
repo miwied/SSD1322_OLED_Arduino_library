@@ -1,7 +1,7 @@
 // Config: Driver: SSD1322; MCU: ESP32-S3; Framework: Arduino
 
 // include the ssd1322 lib
-#include "../lib/SSD1322_OLED_lib/SSD1322.h"
+#include <SSD1322.h>
 
 // arduino framework + esp32 spi
 #include <Arduino.h>
@@ -186,7 +186,7 @@ void setup()
 
   // large bitmap
   // displayLargeBitmap();
-  //clearDisplayBuffer();
+  // clearDisplayBuffer();
 }
 
 void loop()
