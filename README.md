@@ -7,13 +7,16 @@ Arduino framework (especially working with the ESP32 mcu).
 
 ## Changes compared to the original repo:
 
-- Translated library to cpp
-- Added a ESP32 + PlatformIO example
+- Implemented Arduino compatibility
+- Translated files to cpp
+- Added wrapper class _'SSD1322.h'_ which holds and instances the 'sub-modules'
+  correctly
+- Added an ESP32 example (PlatformIO project)
 - Deleted the STM32F4 Example <br> <br>
 
 ---
 
-# SSD1322 OLED library (Arduino compatibale)
+# SSD1322 OLED Arduino library
 
 Portable library for 256x64 OLED display with SSD1322 controller
 
